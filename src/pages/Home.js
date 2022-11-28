@@ -6,16 +6,32 @@ const Home = () => {
 	const [dataGenre, setDataGenre] = useState([]);
 	const [textInput, setTextInput] = useState('');
 
-	const searchMovies = (e) => {
+	const searchMovies = async (e) => {
 		e.preventDefault();
-		fetch(
+		document.querySelector('.noresult').innerHTML = ``;
+		await fetch(
 			'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
 				textInput +
 				'&language=fr-FR'
 		)
 			.then((res) => res.json())
-			.then((data) => setDataMovies(data.results))
+			.then((data) =>
+				data.results.length !== 0
+					? setDataMovies(data.results)
+					: (document.querySelector(
+							'.noresult'
+					  ).innerHTML = `Aucun résultats`) &&
+					  setDataMovies(data.results)
+			)
 			.catch((error) => console.log('Erreur : ' + error));
+
+		// console.log(dataMovies);
+
+		// if (dataMovies[0] === false) {
+		// 	console.log('false');
+		// } else {
+		// 	console.log('true');
+		// }
 
 		fetch(
 			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
@@ -94,6 +110,7 @@ const Home = () => {
 					</li>
 				))}
 			</div>
+			<div className="noresult"></div>
 		</div>
 	);
 };
