@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Card from '../components/Card';
 
 const Home = () => {
 	const [dataMovies, setDataMovies] = useState([]);
 	const [dataGenre, setDataGenre] = useState([]);
+	const [textInput, setTextInput] = useState([]);
 
 	useEffect(() => {
 		fetch(
@@ -25,6 +25,17 @@ const Home = () => {
 	return (
 		<div>
 			<Header />
+			<div className="form-component">
+				<div className="form-container">
+					<form action="#">
+						<input
+							type="text"
+							placeholder="Entrez le titre d'un film"
+						/>
+						<input type="submit" value="Rechercher" />
+					</form>
+				</div>
+			</div>
 			<div className="result">
 				{dataMovies.map((movie) => (
 					<li className="card" key={movie.id}>
