@@ -4,15 +4,29 @@ import Header from '../components/Header';
 const Home = () => {
 	const [dataMovies, setDataMovies] = useState([]);
 	const [dataGenre, setDataGenre] = useState([]);
-	const [textInput, setTextInput] = useState([]);
+	const [textInput, setTextInput] = useState('');
 
-	useEffect(() => {
+	const searchMovies = (e) => {
+		e.preventDefault();
 		fetch(
-			'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=code&language=fr-FR'
+			'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
+				textInput +
+				'&language=fr-FR'
 		)
 			.then((res) => res.json())
 			.then((data) => setDataMovies(data.results))
 			.catch((error) => console.log('Erreur : ' + error));
+
+		document.querySelector('input[type="text"]').value = '';
+	};
+
+	useEffect(() => {
+		// fetch(
+		// 	'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=code&language=fr-FR'
+		// )
+		// 	.then((res) => res.json())
+		// 	.then((data) => setDataMovies(data.results))
+		// 	.catch((error) => console.log('Erreur : ' + error));
 
 		fetch(
 			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
@@ -27,12 +41,17 @@ const Home = () => {
 			<Header />
 			<div className="form-component">
 				<div className="form-container">
-					<form action="#">
+					<form>
 						<input
 							type="text"
 							placeholder="Entrez le titre d'un film"
+							onChange={(e) => setTextInput(e.target.value)}
 						/>
-						<input type="submit" value="Rechercher" />
+						<input
+							type="submit"
+							value="Rechercher"
+							onClick={(e) => searchMovies(e)}
+						/>
 					</form>
 				</div>
 			</div>
