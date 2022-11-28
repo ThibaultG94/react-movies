@@ -17,17 +17,17 @@ const Home = () => {
 			.then((data) => setDataMovies(data.results))
 			.catch((error) => console.log('Erreur : ' + error));
 
+		fetch(
+			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
+		)
+			.then((res) => res.json())
+			.then((data) => setDataGenre(data.genres))
+			.catch((error) => console.log('Erreur : ' + error));
+
 		document.querySelector('input[type="text"]').value = '';
 	};
 
 	useEffect(() => {
-		// fetch(
-		// 	'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=code&language=fr-FR'
-		// )
-		// 	.then((res) => res.json())
-		// 	.then((data) => setDataMovies(data.results))
-		// 	.catch((error) => console.log('Erreur : ' + error));
-
 		fetch(
 			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
 		)
@@ -60,7 +60,7 @@ const Home = () => {
 					<li className="card" key={movie.id}>
 						<img
 							src={
-								`https://image.tmdb.org/t/p/original`
+								movie.poster_path
 									? `https://image.tmdb.org/t/p/original` +
 									  movie.poster_path
 									: `./img/poster.jpg`
@@ -76,7 +76,8 @@ const Home = () => {
 									.join('/')}
 						</h5>
 						<h4>
-							{movie.vote_average + `/10`} <span>⭐</span>
+							{movie.vote_count ? movie.vote_average + `/10` : ''}{' '}
+							<span>⭐</span>
 						</h4>
 						<ul>
 							{movie.genre_ids.map((ids) => {
