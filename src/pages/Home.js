@@ -1,56 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 
 const Home = () => {
 	const [dataMovies, setDataMovies] = useState([]);
 	const [dataGenre, setDataGenre] = useState([]);
 	const [textInput, setTextInput] = useState('');
+	// const [sortMovies, setSortMovies] = useState('none');
 
-	const searchMovies = async (e) => {
-		e.preventDefault();
-		document.querySelector('.noresult').innerHTML = ``;
-		await fetch(
-			'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
-				textInput +
-				'&language=fr-FR'
-		)
-			.then((res) => res.json())
-			.then((data) =>
-				data.results.length !== 0
-					? setDataMovies(data.results)
-					: (document.querySelector(
-							'.noresult'
-					  ).innerHTML = `Aucun résultats`) &&
-					  setDataMovies(data.results)
+	const searchMovies = async (e, sortMovies) => {
+		if (sortMovies == 'goodToBad') {
+			await fetch(
+				'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
+					textInput +
+					'&language=fr-FR'
 			)
-			.catch((error) => console.log('Erreur : ' + error));
+				.then((res) => res.json())
+				.then((data) => setDataMovies(data.results))
+				.catch((error) => console.log('Erreur : ' + error));
 
-		// console.log(dataMovies);
+			fetch(
+				'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
+			)
+				.then((res) => res.json())
+				.then((data) => setDataGenre(data.genres))
+				.catch((error) => console.log('Erreur : ' + error));
+		} else if (sortMovies === 'badToGood') {
+			await fetch(
+				'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
+					textInput +
+					'&language=fr-FR'
+			)
+				.then((res) => res.json())
+				.then((data) => setDataMovies(data.results))
+				.catch((error) => console.log('Erreur : ' + error));
 
-		// if (dataMovies[0] === false) {
-		// 	console.log('false');
-		// } else {
-		// 	console.log('true');
-		// }
+			fetch(
+				'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
+			)
+				.then((res) => res.json())
+				.then((data) => setDataGenre(data.genres))
+				.catch((error) => console.log('Erreur : ' + error));
+		} else {
+			e.preventDefault();
+			document.querySelector('.noresult').innerHTML = ``;
+			await fetch(
+				'https://api.themoviedb.org/3/search/movie?api_key=71f1c0748cbaa032bf6d4124a879bf21&query=' +
+					textInput +
+					'&language=fr-FR'
+			)
+				.then((res) => res.json())
+				.then((data) =>
+					data.results.length !== 0
+						? setDataMovies(data.results)
+						: (document.querySelector(
+								'.noresult'
+						  ).innerHTML = `Aucun résultats`) &&
+						  setDataMovies(data.results)
+				)
+				.catch((error) => console.log('Erreur : ' + error));
 
-		fetch(
-			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
-		)
-			.then((res) => res.json())
-			.then((data) => setDataGenre(data.genres))
-			.catch((error) => console.log('Erreur : ' + error));
+			fetch(
+				'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
+			)
+				.then((res) => res.json())
+				.then((data) => setDataGenre(data.genres))
+				.catch((error) => console.log('Erreur : ' + error));
 
-		document.querySelector('input[type="text"]').value = '';
+			document.querySelector('input[type="text"]').value = '';
+		}
 	};
-
-	useEffect(() => {
-		fetch(
-			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
-		)
-			.then((res) => res.json())
-			.then((data) => setDataGenre(data.genres))
-			.catch((error) => console.log('Erreur : ' + error));
-	}, []);
 
 	return (
 		<div>
@@ -69,6 +87,18 @@ const Home = () => {
 							onClick={(e) => searchMovies(e)}
 						/>
 					</form>
+					<div className="btn-sort-container">
+						<div
+							id="goodToBad"
+							onClick={(e) => searchMovies(e, e.target.id)}>
+							Top <span>&#x2192;</span>
+						</div>
+						<div
+							id="badToGood"
+							onClick={(e) => searchMovies(e, e.target.id)}>
+							Flop <span>&#x2192;</span>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div className="result">
