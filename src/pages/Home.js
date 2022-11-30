@@ -7,6 +7,8 @@ const Home = () => {
 	const [dataGenre, setDataGenre] = useState([]);
 	const [textInput, setTextInput] = useState('');
 	const [sortMovies, setSortMovies] = useState('');
+	const [dataFavorite, setDataFavorite] = useState([]);
+	const [saveId, setSaveId] = useState();
 
 	const navigate = useNavigate();
 
@@ -42,6 +44,29 @@ const Home = () => {
 	const sortMovie = async (e) => {
 		await setSortMovies(e);
 		navigate('/');
+	};
+
+	const checkFavorite = (favorite) => {
+		console.log(favorite.id, saveId);
+		return favorite.id != saveId;
+	};
+
+	const setFavorite = async (elementId) => {
+		await setSaveId(elementId);
+		await fetch(
+			'https://api.themoviedb.org/3/movie/' +
+				elementId +
+				'?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
+		)
+			.then((res) => res.json())
+			.then((data) => {
+				if (dataFavorite.every(checkFavorite)) {
+					dataFavorite.push(data);
+				}
+			});
+
+		localStorage.favorite = JSON.stringify(dataFavorite);
+		console.log(dataFavorite);
 	};
 
 	return (
@@ -83,7 +108,7 @@ const Home = () => {
 						} else if (sortMovies == 'badToGood') {
 							return a.vote_average - b.vote_average;
 						} else {
-							console.log('Salut :)');
+							return;
 						}
 					})
 					.map((movie) => (
@@ -122,7 +147,10 @@ const Home = () => {
 							</ul>
 							<h3>Synopsis</h3>
 							<p>{movie.overview}</p>
-							<div className="btn">
+							<div
+								className="btn"
+								id={movie.id}
+								onClick={(e) => setFavorite(e.target.id)}>
 								Ajouter aux coups de coeur
 							</div>
 						</li>
