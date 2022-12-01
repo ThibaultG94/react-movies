@@ -8,7 +8,7 @@ const Home = () => {
 	const [textInput, setTextInput] = useState('');
 	const [sortMovies, setSortMovies] = useState('');
 	const [dataFavorite, setDataFavorite] = useState([]);
-	const [saveId, setSaveId] = useState();
+	let saveId = 0;
 
 	const navigate = useNavigate();
 
@@ -52,7 +52,7 @@ const Home = () => {
 	};
 
 	const setFavorite = async (elementId) => {
-		await setSaveId(elementId);
+		saveId = elementId;
 		await fetch(
 			'https://api.themoviedb.org/3/movie/' +
 				elementId +
@@ -150,7 +150,7 @@ const Home = () => {
 							<div
 								className="btn"
 								id={movie.id}
-								onClick={(e) => setFavorite(e.target.id)}>
+								onClick={async (e) => setFavorite(e.target.id)}>
 								Ajouter aux coups de coeur
 							</div>
 						</li>
