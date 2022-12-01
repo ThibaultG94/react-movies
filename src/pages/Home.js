@@ -70,7 +70,7 @@ const Home = () => {
 	};
 
 	return (
-		<div>
+		<div className="home-page">
 			<Header />
 			<div className="form-component">
 				<div className="form-container">
@@ -78,6 +78,7 @@ const Home = () => {
 						<input
 							type="text"
 							placeholder="Entrez le titre d'un film"
+							id="search-input"
 							onChange={(e) => setTextInput(e.target.value)}
 						/>
 						<input
@@ -88,11 +89,13 @@ const Home = () => {
 					</form>
 					<div className="btn-sort-container">
 						<div
+							className="btn-sort"
 							id="goodToBad"
 							onClick={(e) => sortMovie('goodToBad')}>
 							Top <span>&#x2192;</span>
 						</div>
 						<div
+							className="btn-sort"
 							id="badToGood"
 							onClick={(e) => sortMovie('badToGood')}>
 							Flop <span>&#x2192;</span>
@@ -120,16 +123,18 @@ const Home = () => {
 										  movie.poster_path
 										: `./img/poster.jpg`
 								}
-								alt={movie.title}
+								alt={'Affiche ' + movie.title}
 							/>
 							<h2>{movie.title}</h2>
-							<h5>
-								{`Sorti le : ` +
-									movie.release_date
+							{movie.release_date ? (
+								<h5>
+									Sorti le :{' '}
+									{movie.release_date
 										.split('-')
 										.reverse()
 										.join('/')}
-							</h5>
+								</h5>
+							) : null}
 							<h4>
 								{movie.vote_count
 									? movie.vote_average + `/10`
