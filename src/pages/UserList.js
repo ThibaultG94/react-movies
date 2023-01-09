@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Header from '../components/Header';
+import Card from '../components/Card';
 
 const UserList = () => {
-	const [dataFavorite, setDataFavorite] = useState(
-		JSON.parse(localStorage.favorite)
-	);
+	const [listData, setListData] = useState([]);
+
+	useEffect(() => {
+		let moviesId = window.localStorage.movies
+			? window.localStorage.movies.split(',')
+			: [];
+
+		for (let i = 0; i < moviesId.length; i++) {
+			axios
+				.get(
+					`https://api.themoviedb.org/3/movie/${moviesId[i]}?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR`
+				)
+				.then((res) =>
+					setListData((listData) => [...listData, res.data])
+				);
+		}
+	}, []);
 
 	return (
 		<div>
@@ -14,41 +30,13 @@ const UserList = () => {
 					Coups de coeur <span>💖</span>
 				</h2>
 				<div className="result">
-					{dataFavorite.map((movie) => (
-						<li className="card" key={movie.id}>
-							<img
-								src={
-									movie.poster_path
-										? `https://image.tmdb.org/t/p/original` +
-										  movie.poster_path
-										: `./img/poster.jpg`
-								}
-								alt={movie.title}
-							/>
-							<h2>{movie.title}</h2>
-							<h5>
-								{`Sorti le : ` +
-									movie.release_date
-										.split('-')
-										.reverse()
-										.join('/')}
-							</h5>
-							<h4>
-								{movie.vote_count
-									? Math.round(movie.vote_average * 10) / 10 +
-									  `/10`
-									: ''}{' '}
-								<span>⭐</span>
-							</h4>
-							<ul>
-								{movie.genres.map((genre) => {
-									return <li>{genre.name}</li>;
-								})}
-							</ul>
-							<h3>Synopsis</h3>
-							<p>{movie.overview}</p>
-						</li>
-					))}
+					{listData.length > 0 ? (
+						listData.map((movie) => (
+							<Card movie={movie} key={movie.id} />
+						))
+					) : (
+						<h2>Aucun coups de coeur pour le moment</h2>
+					)}
 				</div>
 			</div>
 		</div>

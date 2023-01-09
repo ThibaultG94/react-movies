@@ -1,41 +1,83 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-const Card = ({ movie }) => {
-	const [dataGenre, setDataGenre] = useState([]);
+const Card = ({ movie, dataGenre }) => {
+	const addFavorite = () => {
+		let storedData = window.localStorage.movies
+			? window.localStorage.movies.split(',')
+			: [];
 
-	useEffect(() => {
-		fetch(
-			'https://api.themoviedb.org/3/genre/movie/list?api_key=71f1c0748cbaa032bf6d4124a879bf21&language=fr-FR'
-		)
-			.then((res) => res.json())
-			.then((data) => setDataGenre(data.genres))
-			.catch((error) => console.log('Erreur : ' + error));
-	}, []);
+		if (!storedData.includes(movie.id.toString())) {
+			storedData.push(movie.id);
+			window.localStorage.movies = storedData;
+		}
+	};
+
+	const deleteFavorite = () => {
+		let storedData = window.localStorage.movies.split(',');
+		let newData = storedData.filter((id) => id != movie.id);
+		window.localStorage.movies = newData;
+	};
 
 	return (
-		<li className="card">
+		<div className="card">
 			<img
 				src={
-					`https://image.tmdb.org/t/p/original`
-						? `https://image.tmdb.org/t/p/original` +
-						  movie.poster_path
-						: `./img/poster.jpg`
+					movie.poster_path
+						? `https://image.tmdb.org/t/p/original/${movie.poster_path}`
+						: './img/poster.jpg'
 				}
-				alt={movie.title}
+				alt={`affiche ${movie.title}`}
 			/>
 			<h2>{movie.title}</h2>
-			<h5>
-				{`Sorti le : ` +
-					movie.release_date.split('-').reverse().join('/')}
-			</h5>
+			{movie.release_date ? (
+				<h5>
+					Sorti le :{' '}
+					{movie.release_date.split('-').reverse().join('/')}
+				</h5>
+			) : null}
 			<h4>
-				{movie.vote_average + `/10`} <span>⭐</span>
+				{movie.vote_count ? movie.vote_average.toFixed(1) + `/10` : ''}{' '}
+				<span>⭐</span>
 			</h4>
-			<ul></ul>
-			<h3>Synopsis</h3>
+			<ul>
+				{movie.genre_ids
+					? movie.genre_ids.map((ids) => {
+							return dataGenre
+								.filter((genre) => genre.id === ids)
+								.map((genre) => (
+									<li key={genre.id * Math.random()}>
+										{genre.name}
+									</li>
+								));
+					  })
+					: movie.genres.map((genre) => (
+							<li key={genre.id}>{genre.name}</li>
+					  ))}
+			</ul>
+			{movie.overview ? <h3>Synopsis</h3> : ''}
 			<p>{movie.overview}</p>
-			<div className="btn">Ajouter aux coups de coeur</div>
-		</li>
+			{!window.localStorage.movies.includes(movie.id.toString()) ? (
+				<div
+					className="btn"
+					id={movie.id}
+					onClick={async (e) => {
+						addFavorite(e.target.id);
+						window.location.reload();
+					}}>
+					Ajouter aux coups de coeur
+				</div>
+			) : (
+				<div
+					className="btn"
+					id={movie.id}
+					onClick={() => {
+						deleteFavorite();
+						window.location.reload();
+					}}>
+					Supprimer de la liste
+				</div>
+			)}
+		</div>
 	);
 };
 
