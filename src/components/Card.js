@@ -57,17 +57,7 @@ const Card = ({ movie, dataGenre }) => {
 			{movie.overview ? <h3>Synopsis</h3> : ''}
 			<p>{movie.overview}</p>
 			{window.localStorage.movies &&
-			!window.localStorage.movies.includes(movie.id.toString()) ? (
-				<div
-					className="btn"
-					id={movie.id}
-					onClick={async (e) => {
-						addFavorite(e.target.id);
-						window.location.reload();
-					}}>
-					Ajouter aux coups de coeur
-				</div>
-			) : (
+			window.localStorage.movies.includes(movie.id.toString()) ? (
 				<div
 					className="btn"
 					id={movie.id}
@@ -76,6 +66,16 @@ const Card = ({ movie, dataGenre }) => {
 						window.location.reload();
 					}}>
 					Supprimer de la liste
+				</div>
+			) : (
+				<div
+					className="btn"
+					id={movie.id}
+					onClick={async (e) => {
+						addFavorite(e.target.id);
+						window.location.reload();
+					}}>
+					Ajouter aux coups de coeur
 				</div>
 			)}
 		</div>
