@@ -56,7 +56,8 @@ const Card = ({ movie, dataGenre }) => {
 			</ul>
 			{movie.overview ? <h3>Synopsis</h3> : ''}
 			<p>{movie.overview}</p>
-			{!window.localStorage.movies.includes(movie.id.toString()) ? (
+			{window.localStorage.movies &&
+			!window.localStorage.movies.includes(movie.id.toString()) ? (
 				<div
 					className="btn"
 					id={movie.id}
